@@ -25,7 +25,6 @@ def main():
 
     #Gets guess from user and assign it as word to use functions
     word = get_random_word()
-    print(word)
 
 
     #Main game loop
