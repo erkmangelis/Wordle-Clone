@@ -1,5 +1,5 @@
 import sys
 import random
+from http import HTTPStatus
 import requests
 from rich import print
-from http import HTTPStatus
