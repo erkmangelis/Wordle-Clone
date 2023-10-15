@@ -1,5 +1,6 @@
 import sys
 import random
+from http import HTTPStatus
 import requests
 from rich import print
 
@@ -20,7 +21,7 @@ def main():
     #This variable determine what will display end game
     status = ""
 
-    #The color code list changes after each guess depending on the letters in the guessed letters
+    #The color code list changes after each guess depending on the letters in the guessed word
     color_coded = [["w","w"],["w","w"],["w","w"],["w","w"],["w","w"]]
 
     #Gets guess from user and assign it as word to use functions
@@ -84,15 +85,13 @@ def match_letters(letters, color_coded):
                 letters[letters.index(pair[1])] = f"[bold black]{pair[1]}[/bold black]"
 
     #Transform letter list to string object
-    strletters = ""
-    for letter in letters:
-        strletters += letter
+    strletters = "".join(letters)
 
     #returns letters as string object
     return strletters
 
 
-#Make letters in guess colored from when they re matched the word
+#Adds color tag to each letter in the word, if letter match with guessed word
 #"c" correct -> green | "m" misplaced -> yellow | "w" wrong -> black
 def match_word(guess, color_coded):
     new_guess = ""
@@ -137,15 +136,25 @@ def color_code(guess, word):
 
 #Gets 5 letter words from stanford.edu and return randomly one of them
 def get_random_word():
-    r = requests.get("https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt")
-    word_list = []
+    try:
+        url = "https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt"
+        r = requests.get(url)
 
-    for word in r.text.replace("\n", ",").split(","):
-        word_list.append(word.upper())
+        if r.status_code == HTTPStatus.OK:
+            word_list = []
 
-    word_list.pop()
+            for word in r.text.replace("\n", ",").split(","):
+                word_list.append(word.upper())
 
-    return random.choice(word_list)
+            word_list.pop()
+
+            return random.choice(word_list)
+
+        else:
+            raise Exception
+
+    except:
+        sys.exit(f"Request Failed! {url} not suitable format for getting words")
 
 
 #Gets valid guess from user
