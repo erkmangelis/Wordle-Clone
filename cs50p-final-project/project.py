@@ -5,6 +5,7 @@ import requests
 from rich import print
 
 
+
 def main():
     #Guess count | Will increased after every guess
     guess_count = 1
